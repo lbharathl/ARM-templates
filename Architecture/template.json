@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "0.0.0.1",
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2020-11-01",
+            "location": "[resourceGroup().location]",
+            "name": "Web-nsg",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "AllowSSH",
+                        "properties": {
+                            "access": "Allow",
+                            "priority": 300,
+                            "direction": "Inbound",
+                            "protocol": "Tcp",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "22",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "AllowHTTPS",
+                        "properties": {
+                            "access": "Allow",
+                            "priority": 310,
+                            "direction": "Inbound",
+                            "protocol": "Tcp",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "443",
+                            "sourcePortRange": "*",
+                            "sourceAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
