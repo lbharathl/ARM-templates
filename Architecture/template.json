@@ -13,6 +13,14 @@
                 "192.168.1.0/24",
                 "192.168.2.0"
             ]
+        },
+        "subnet-names": {
+            "type": "array",
+            "defaultValue": [
+                "web",
+                "app",
+                "db"
+            ]
         }
     },
     "resources": [
@@ -110,31 +118,22 @@
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "apiVersion": "2020-11-01",
             "location": "[resourceGroup().location]",
-            "name": "myvnet002/web",
+            //concat function (subnet 0 =[concat('subnet', 0)])
+            //"name": "myvnet002/web",
+            "name": "[concat('myvnet002','/',parameters('subnet-names')[copyIndex()])]",
             "properties": {
                 "addressPrefix": "[parameters('cidr-subnet')[0]]"
             },
-            "dependsOn": ["[resourceId('Microsoft.Network/virtualNetworks', 'myvnet02')]"]
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "apiVersion": "2020-11-01",
-            "location": "[resourceGroup().location]",
-            "name": "myvnet002/App",
-            "properties": {
-                "addressPrefix": "[parameters('cidr-subnet')[1]]"
-            },
-            "dependsOn": ["[resourceId('Microsoft.Network/virtualNetworks', 'myvnet02')]"]
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "apiVersion": "2020-11-01",
-            "location": "[resourceGroup().location]",
-            "name": "myvnet002/DB",
-            "properties": {
-                "addressPrefix": "[parameters('cidr-subnet')[2]]"
-            },
-            "dependsOn": ["[resourceId('Microsoft.Network/virtualNetworks', 'myvnet02')]"]
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', 'myvnet02')]"
+                ],
+                "copy": {
+                    "name": "subnetcopy",
+                    //"count": 3, //copy as many cidr's we have
+                    //we can use array functions -Length
+                    "count": "[length(parameters('cidr-subnet'))]",
+                    "mode": "Serial"
+                }
         }
     ]
 }
